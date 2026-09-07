@@ -1,0 +1,26 @@
+name: IWM Signal Check
+
+on:
+  schedule:
+    - cron: '*/5 13-20 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  check-signal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy requests
+
+      - name: Run signal check
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python iwm_signal_check_once.py
