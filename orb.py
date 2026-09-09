@@ -416,7 +416,7 @@ class PositionManager:
             f"Premium ${price:.2f} (Δ{delta:.2f}, {quote_note}) | Reason: {signal.reason}\n"
             f"Plan: stop @ -{self.cfg.stop_loss_pct*100:.0f}%, target @ +{self.cfg.profit_target_pct*100:.0f}%, "
             f"hard exit by {self.cfg.hard_time_stop.strftime('%H:%M')} ET{expiry_note}",
-            title=f"🟢 BUY {opt_type.upper()}",
+            title=f"BUY {opt_type.upper()}",  # emoji removed from title - HTTP headers must be latin-1
             priority="high",
         )
 
@@ -448,7 +448,7 @@ class PositionManager:
                 self.notifier.send(
                     f"SELL {pos.option_type.upper()} ${pos.strike:.0f} — "
                     f"entry ${pos.entry_price:.2f} -> now ${current_price:.2f} ({pnl_pct:+.0%}) | {reason}",
-                    title=f"🔴 SELL {pos.option_type.upper()} (close position)",
+                    title=f"SELL {pos.option_type.upper()} (close position)",  # emoji removed from title
                     priority="urgent",
                 )
             else:
