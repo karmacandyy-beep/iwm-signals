@@ -6,6 +6,9 @@ on:
     - cron: "*/5 13-20 * * 1-5"
   workflow_dispatch:
 
+permissions:
+  contents: write  # needed to commit state/positions.json back to the repo
+
 jobs:
   check-orb-signal:
     runs-on: ubuntu-latest
@@ -21,7 +24,19 @@ jobs:
       - name: Install dependencies
         run: pip install numpy pandas scipy requests yfinance
 
-      - name: Run ORB 0DTE signal check (LIVE — real yfinance data + option chain)
+      - name: Run ORB 0DTE signal check (LIVE - real yfinance data + option chain)
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python3 orb.py --live --iterations 1
+
+      - name: Save open-position state back to repo
+        run: |
+          if [ -n "$(git status --porcelain state/positions.json 2>/dev/null)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add state/positions.json
+            git commit -m "Update open position state [skip ci]"
+            git push
+          else
+            echo "No change to position state."
+          fi
