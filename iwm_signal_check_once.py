@@ -75,8 +75,8 @@ def main():
 
     if long_fired:
         send_ntfy_alert(
-            f"IWM \U0001F4C8 LOOK AT CALLS — {last_ts:%H:%M}",
-            f"Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
+            f"IWM LOOK AT CALLS - {last_ts:%H:%M}",
+            f"\U0001F4C8 Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
             f"Price {last_price:.2f} | POC {vp['poc']:.2f} VAH {vp['vah']:.2f} VAL {vp['val']:.2f}\n"
             f"Bullish signal fired. If a 0DTE call fits your plan, check the "
             f"chain/bid-ask in Wealthsimple yourself before acting. Signal only, not advice.",
@@ -84,8 +84,8 @@ def main():
         )
     if short_fired:
         send_ntfy_alert(
-            f"IWM \U0001F4C9 LOOK AT PUTS — {last_ts:%H:%M}",
-            f"Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
+            f"IWM LOOK AT PUTS - {last_ts:%H:%M}",
+            f"\U0001F4C9 Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
             f"Price {last_price:.2f} | POC {vp['poc']:.2f} VAH {vp['vah']:.2f} VAL {vp['val']:.2f}\n"
             f"Bearish signal fired. If a 0DTE put fits your plan, check the "
             f"chain/bid-ask in Wealthsimple yourself before acting. Signal only, not advice.",
