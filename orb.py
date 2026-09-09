@@ -86,6 +86,9 @@ class Config:
 
     poll_seconds: int = 30
 
+    # --- Persistence (so exit alerts survive GitHub Actions restarting fresh each run) ---
+    state_file: str = "state/positions.json"
+
 
 CFG = Config()
 
@@ -378,6 +381,31 @@ class Position:
     is_live_quote: bool = False
     contracts: int = 1
 
+    def to_dict(self) -> dict:
+        return {
+            "option_type": self.option_type,
+            "strike": self.strike,
+            "entry_price": self.entry_price,
+            "entry_time": self.entry_time.isoformat(),
+            "expiry": self.expiry,
+            "is_true_0dte": self.is_true_0dte,
+            "is_live_quote": self.is_live_quote,
+            "contracts": self.contracts,
+        }
+
+    @staticmethod
+    def from_dict(d: dict) -> "Position":
+        return Position(
+            option_type=d["option_type"],
+            strike=d["strike"],
+            entry_price=d["entry_price"],
+            entry_time=datetime.fromisoformat(d["entry_time"]),
+            expiry=d.get("expiry"),
+            is_true_0dte=d.get("is_true_0dte", False),
+            is_live_quote=d.get("is_live_quote", False),
+            contracts=d.get("contracts", 1),
+        )
+
 
 class PositionManager:
     def __init__(self, cfg: Config, notifier: Notifier, chain: Optional[OptionChainProvider] = None):
@@ -385,6 +413,30 @@ class PositionManager:
         self.notifier = notifier
         self.chain = chain
         self.positions: List[Position] = []
+
+    def load_state(self, path: str):
+        """Load open positions from disk. GitHub Actions runs are stateless
+        processes, so without this, exit alerts (stop-loss/take-profit) would
+        never fire -- every run would forget any position from the last run."""
+        import json, os
+        if not os.path.exists(path):
+            return
+        try:
+            with open(path) as f:
+                data = json.load(f)
+            self.positions = [Position.from_dict(d) for d in data]
+            if self.positions:
+                log.info(f"Loaded {len(self.positions)} open position(s) from {path}")
+        except Exception as e:
+            log.warning(f"Could not load position state ({path}): {e}")
+
+    def save_state(self, path: str):
+        """Save open positions to disk so the next GitHub Actions run knows
+        about them and can check for exits."""
+        import json, os
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        with open(path, "w") as f:
+            json.dump([p.to_dict() for p in self.positions], f, indent=2)
 
     def can_enter(self) -> bool:
         return len(self.positions) < self.cfg.max_concurrent_positions
@@ -412,11 +464,12 @@ class PositionManager:
         quote_note = "live chain quote" if is_live else "Black-Scholes estimate (no live chain data)"
 
         self.notifier.send(
-            f"BUY {opt_type.upper()} — IWM ${spot:.2f} | Strike ${strike:.0f} | "
-            f"Premium ${price:.2f} (Δ{delta:.2f}, {quote_note}) | Reason: {signal.reason}\n"
-            f"Plan: stop @ -{self.cfg.stop_loss_pct*100:.0f}%, target @ +{self.cfg.profit_target_pct*100:.0f}%, "
-            f"hard exit by {self.cfg.hard_time_stop.strftime('%H:%M')} ET{expiry_note}",
-            title=f"BUY {opt_type.upper()}",  # emoji removed from title - HTTP headers must be latin-1
+            f"BUY {opt_type.upper()} - IWM ${strike:.0f} strike\n"
+            f"Premium: ${price:.2f}/contract ({quote_note})\n"
+            f"Why: {signal.reason}\n"
+            f"Exit plan: stop -{self.cfg.stop_loss_pct*100:.0f}% / target +{self.cfg.profit_target_pct*100:.0f}% / "
+            f"hard exit {self.cfg.hard_time_stop.strftime('%H:%M')} ET{expiry_note}",
+            title=f"BUY {opt_type.upper()} - IWM ${spot:.2f}",
             priority="high",
         )
 
@@ -446,9 +499,10 @@ class PositionManager:
 
             if reason:
                 self.notifier.send(
-                    f"SELL {pos.option_type.upper()} ${pos.strike:.0f} — "
-                    f"entry ${pos.entry_price:.2f} -> now ${current_price:.2f} ({pnl_pct:+.0%}) | {reason}",
-                    title=f"SELL {pos.option_type.upper()} (close position)",  # emoji removed from title
+                    f"CLOSE {pos.option_type.upper()} ${pos.strike:.0f}\n"
+                    f"Entry: ${pos.entry_price:.2f}  ->  Now: ${current_price:.2f} ({pnl_pct:+.0%})\n"
+                    f"Why: {reason}",
+                    title=f"SELL {pos.option_type.upper()} - close now",
                     priority="urgent",
                 )
             else:
@@ -467,6 +521,7 @@ def run(feed: DataFeed, cfg: Config, chain: Optional[OptionChainProvider] = None
     notifier = Notifier(cfg)
     engine = SignalEngine(cfg)
     pm = PositionManager(cfg, notifier, chain)
+    pm.load_state(cfg.state_file)
     mode = "LIVE (real yfinance data)" if isinstance(feed, YFinanceFeed) else "DRY-RUN (synthetic data)"
     log.info(f"IWM 0DTE strategy started — {mode}, polling every {cfg.poll_seconds}s")  # log only, no push
 
@@ -505,6 +560,9 @@ def run(feed: DataFeed, cfg: Config, chain: Optional[OptionChainProvider] = None
         if max_iterations is not None and iteration >= max_iterations:
             break
         time.sleep(cfg.poll_seconds)
+
+    pm.save_state(cfg.state_file)
+    log.info(f"Saved position state ({len(pm.positions)} open) to {cfg.state_file}")
 
 
 if __name__ == "__main__":
