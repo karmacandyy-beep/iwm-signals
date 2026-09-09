@@ -2,7 +2,6 @@ name: ORB 0DTE Signal Check
 
 on:
   # Runs every 5 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET
-  # Separate workflow from iwm_signals.yml so both strategies run independently
   schedule:
     - cron: "*/5 13-20 * * 1-5"
   workflow_dispatch:
@@ -20,9 +19,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install numpy pandas scipy requests
+        run: pip install numpy pandas scipy requests yfinance
 
-      - name: Run ORB 0DTE signal check (dry-run until a live data feed is wired in)
+      - name: Run ORB 0DTE signal check (LIVE — real yfinance data + option chain)
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: python3 orb.py --dry-run --iterations 1
+        run: python3 orb.py --live --iterations 1
