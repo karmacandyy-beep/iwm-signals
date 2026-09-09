@@ -468,7 +468,7 @@ def run(feed: DataFeed, cfg: Config, chain: Optional[OptionChainProvider] = None
     engine = SignalEngine(cfg)
     pm = PositionManager(cfg, notifier, chain)
     mode = "LIVE (real yfinance data)" if isinstance(feed, YFinanceFeed) else "DRY-RUN (synthetic data)"
-    notifier.send(f"IWM 0DTE strategy started — {mode}, polling every {cfg.poll_seconds}s")
+    log.info(f"IWM 0DTE strategy started — {mode}, polling every {cfg.poll_seconds}s")  # log only, no push
 
     iteration = 0
     while True:
