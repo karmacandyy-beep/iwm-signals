@@ -7,14 +7,15 @@ Each run:
   1. Pulls the latest IWM 5-minute bars
   2. Computes the same absorption/accumulation/aggression + ORB signal
   3. If the most recently closed bar has a long/short signal, pushes an
-     alert to your phone via ntfy.sh
+     alert to your phone via ntfy.sh, phrased as "look at calls" /
+     "look at puts" for 0DTE options
   4. Exits. GitHub Actions runs this file again on the next schedule tick.
 
 This intentionally does NOT track an open position or do entry/exit P&L
-logic like the naked-option script — GitHub Actions runs are stateless
-(no memory between runs) unless you add extra storage, which adds a lot
-of complexity for a phone-only setup. This version is signal alerts only:
-you decide what to do with each one.
+logic — GitHub Actions runs are stateless (no memory between runs).
+This is signal alerts only: you decide what to do with each one, and
+you check the actual bid/ask in Wealthsimple yourself before acting.
+This is not financial advice and is not a verified edge.
 
 Env vars expected (set as GitHub Actions "secrets", not hardcoded):
     NTFY_TOPIC   — your private ntfy.sh topic name
@@ -35,7 +36,7 @@ NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "")
 NTFY_URL = f"https://ntfy.sh/{NTFY_TOPIC}"
 
 
-def send_ntfy_alert(title: str, message: str, priority: str = "high"):
+def send_ntfy_alert(title: str, message: str, priority: str = "high", tags: str = "chart_with_upwards_trend"):
     if not NTFY_TOPIC:
         print("NTFY_TOPIC not set — skipping push, printing only.")
         print(title, message)
@@ -44,7 +45,7 @@ def send_ntfy_alert(title: str, message: str, priority: str = "high"):
         requests.post(
             NTFY_URL,
             data=message.encode("utf-8"),
-            headers={"Title": title, "Priority": priority, "Tags": "chart_with_upwards_trend"},
+            headers={"Title": title, "Priority": priority, "Tags": tags},
             timeout=10,
         )
     except Exception as e:
@@ -74,15 +75,21 @@ def main():
 
     if long_fired:
         send_ntfy_alert(
-            f"IWM LONG — {last_ts:%H:%M}",
+            f"IWM \U0001F4C8 LOOK AT CALLS — {last_ts:%H:%M}",
+            f"Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
             f"Price {last_price:.2f} | POC {vp['poc']:.2f} VAH {vp['vah']:.2f} VAL {vp['val']:.2f}\n"
-            f"Signal only — check the chain and execute yourself if it fits your plan."
+            f"Bullish signal fired. If a 0DTE call fits your plan, check the "
+            f"chain/bid-ask in Wealthsimple yourself before acting. Signal only, not advice.",
+            tags="chart_with_upwards_trend",
         )
     if short_fired:
         send_ntfy_alert(
-            f"IWM SHORT — {last_ts:%H:%M}",
+            f"IWM \U0001F4C9 LOOK AT PUTS — {last_ts:%H:%M}",
+            f"Strategy: Order-flow (Absorption/Accumulation/Aggression + ORB)\n"
             f"Price {last_price:.2f} | POC {vp['poc']:.2f} VAH {vp['vah']:.2f} VAL {vp['val']:.2f}\n"
-            f"Signal only — check the chain and execute yourself if it fits your plan."
+            f"Bearish signal fired. If a 0DTE put fits your plan, check the "
+            f"chain/bid-ask in Wealthsimple yourself before acting. Signal only, not advice.",
+            tags="chart_with_downwards_trend",
         )
     if not (long_fired or short_fired):
         print("No signal this run.")
