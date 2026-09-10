@@ -4,10 +4,10 @@
     "strike": 288.0,
     "entry_price": 0.775,
     "entry_spot": 287.92999267578125,
-    "structural_stop": 287.8849987792969,
+    "structural_stop": 287.92999267578125,
     "r_dollars": 0.04499389648435681,
     "expiry": "2026-09-10",
-    "hit_1r": false,
+    "hit_1r": true,
     "entry_time": "2026-09-10T11:45:04.194757-04:00"
   }
 }
