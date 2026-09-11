@@ -2,8 +2,8 @@
   {
     "option_type": "put",
     "strike": 289.0,
-    "entry_price": 0.315,
-    "entry_time": "2026-09-11T09:49:27.642785-04:00",
+    "entry_price": 0.525,
+    "entry_time": "2026-09-11T10:23:23.615442-04:00",
     "expiry": "2026-09-11",
     "is_true_0dte": true,
     "is_live_quote": true,
