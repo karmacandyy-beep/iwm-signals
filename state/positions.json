@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "option_type": "put",
+    "strike": 289.0,
+    "entry_price": 0.135,
+    "entry_time": "2026-09-11T13:16:50.393974-04:00",
+    "expiry": "2026-09-11",
+    "is_true_0dte": true,
+    "is_live_quote": true,
+    "contracts": 1
+  }
+]
