@@ -1,16 +1,16 @@
-name: ORB 0DTE Signal Check
+name: IWM Accumulation/Distribution 0DTE Signal Check
 
 on:
-  # Runs every 5 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET
+  # Every 5 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET
   schedule:
     - cron: "*/5 13-20 * * 1-5"
   workflow_dispatch:
 
 permissions:
-  contents: write  # needed to commit state/positions.json back to the repo
+  contents: write  # needed to commit state/ad_positions.json back to the repo
 
 jobs:
-  check-orb-signal:
+  check-signal:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
@@ -24,17 +24,17 @@ jobs:
       - name: Install dependencies
         run: pip install numpy pandas scipy requests yfinance
 
-      - name: Run ORB 0DTE signal check (LIVE - real yfinance data + option chain)
+      - name: Run accumulation/distribution 0DTE signal check (LIVE - real yfinance data)
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: python3 orb.py --live --iterations 1
+        run: python3 accumulation_distribution_0dte.py --live --iterations 1
 
       - name: Save open-position state back to repo
         run: |
-          if [ -n "$(git status --porcelain state/positions.json 2>/dev/null)" ]; then
+          if [ -n "$(git status --porcelain state/ad_positions.json 2>/dev/null)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add state/positions.json
+            git add state/ad_positions.json
             git commit -m "Update open position state [skip ci]"
             git push
           else
