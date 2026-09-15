@@ -1,9 +1,9 @@
 name: IWM Accumulation/Distribution 0DTE Signal Check
 
 on:
-  # Every 5 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET
+  # Every 3 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET (0DTE scalping timeframe)
   schedule:
-    - cron: "*/5 13-20 * * 1-5"
+    - cron: "*/3 13-20 * * 1-5"
   workflow_dispatch:
 
 permissions:

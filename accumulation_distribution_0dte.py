@@ -33,7 +33,12 @@ them as a starting point to tune or replace, not as verified rules.
 
 STRATEGY LOGIC (translated to 0DTE IWM)
 ----------------------------------------
-1. Build a rolling Volume Profile from IWM's intraday 5-min bars
+NOTE: switched from 5-min to 3-min bars on 2026-09-15 at the user's request --
+they trade 0DTE (not swing) and want a tighter timeframe. yfinance has no
+native 3m interval, so DataFeed now pulls 1-minute bars and resamples them
+up to 3-minute bars itself (see DataFeed.intraday_bars).
+
+1. Build a rolling Volume Profile from IWM's intraday 3-min bars
    (developing value area for the current session, seeded with the
    prior session's bars so it isn't empty at the open). POC = highest
    volume price bin. Value area = tightest band of bins holding 70%
@@ -122,13 +127,18 @@ class DataFeed:
     def __init__(self, symbol=SYMBOL):
         self.symbol = symbol
 
-    def intraday_bars(self, days=3, interval="5m"):
+    def intraday_bars(self, days=3, interval="3m"):
+        """0DTE scalping needs a tighter timeframe than yfinance offers
+        natively (valid intervals are 1m/2m/5m/15m/... -- no 3m). So we
+        pull 1-minute bars (yfinance only keeps ~7 days of 1m history,
+        hence the small `days` window) and resample up to 3-minute bars
+        ourselves."""
         import yfinance as yf
 
         df = yf.download(
             self.symbol,
             period=f"{days}d",
-            interval=interval,
+            interval="1m",
             progress=False,
             auto_adjust=False,
         )
@@ -141,7 +151,12 @@ class DataFeed:
             df.index = df.index.tz_localize("UTC").tz_convert(ET)
         else:
             df.index = df.index.tz_convert(ET)
-        return df[["Open", "High", "Low", "Close", "Volume"]]
+        df = df[["Open", "High", "Low", "Close", "Volume"]]
+
+        bars = df.resample("3min").agg(
+            {"Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"}
+        ).dropna()
+        return bars
 
     def last_price(self, df):
         return float(df["Close"].iloc[-1])
@@ -152,12 +167,12 @@ class SyntheticDataFeed(DataFeed):
     closed or you just want to exercise the pipeline without hitting
     yfinance."""
 
-    def intraday_bars(self, days=3, interval="5m"):
+    def intraday_bars(self, days=3, interval="3m"):
         rng = np.random.default_rng(7)
-        periods_per_day = 78  # 6.5h * 12 five-min bars
+        periods_per_day = 130  # 6.5h * 20 three-min bars
         n = periods_per_day * days
         now = datetime.now(ET).replace(second=0, microsecond=0)
-        idx = pd.date_range(end=now, periods=n, freq="5min", tz=ET)
+        idx = pd.date_range(end=now, periods=n, freq="3min", tz=ET)
 
         base = 200.0
         # Build a fake accumulation-at-low -> breakout -> distribution-at-high path
@@ -318,7 +333,7 @@ def find_signal(df: pd.DataFrame, vp: VolumeProfile) -> Signal | None:
 
 def estimate_iv(df: pd.DataFrame) -> float:
     """ASSUMPTION / simplification: realized volatility of the last ~20
-    sessions' worth of 5-min closes, annualized, used as an IV proxy.
+    sessions' worth of 3-min closes, annualized, used as an IV proxy.
     Replace with real implied vol from a live option chain before
     trusting this for actual strike selection -- realized vol
     systematically misprices event/earnings-driven IV skew."""
