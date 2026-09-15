@@ -24,9 +24,13 @@ jobs:
       - name: Install dependencies
         run: pip install numpy pandas scipy requests yfinance
 
-      - name: Run accumulation/distribution 0DTE signal check (LIVE - real yfinance data)
+      - name: Run accumulation/distribution 0DTE signal check (LIVE)
+        # Uses Alpaca real-time IEX data automatically once ALPACA_API_KEY/
+        # ALPACA_SECRET_KEY secrets are set; falls back to yfinance until then.
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
         run: python3 accumulation_distribution_0dte.py --live --iterations 1
 
       - name: Save open-position state back to repo

@@ -162,6 +162,65 @@ class DataFeed:
         return float(df["Close"].iloc[-1])
 
 
+class AlpacaDataFeed(DataFeed):
+    """Real-time (IEX feed) bars from Alpaca's Market Data API -- faster
+    and more reliable intraday than yfinance. Free tier: real-time IEX
+    only (not the full consolidated SIP tape), and options-chain data on
+    the free tier is still delayed, so entry/exit premiums still come
+    from the Black-Scholes estimate in this script, not a live option
+    quote. Needs ALPACA_API_KEY / ALPACA_SECRET_KEY env vars (an Alpaca
+    paper account's keys are enough -- no funding required for data)."""
+
+    BASE_URL = "https://data.alpaca.markets/v2"
+
+    def __init__(self, symbol=SYMBOL):
+        super().__init__(symbol)
+        self.api_key = os.environ["ALPACA_API_KEY"]
+        self.secret_key = os.environ["ALPACA_SECRET_KEY"]
+
+    def _headers(self):
+        return {"APCA-API-KEY-ID": self.api_key, "APCA-API-SECRET-KEY": self.secret_key}
+
+    def intraday_bars(self, days=3, interval="3m"):
+        end = datetime.now(ET)
+        start = end - timedelta(days=days)
+        bars = []
+        page_token = None
+        while True:
+            params = {
+                "timeframe": "3Min",
+                "start": start.astimezone(ET).isoformat(),
+                "end": end.astimezone(ET).isoformat(),
+                "feed": "iex",
+                "limit": 10000,
+                "adjustment": "raw",
+            }
+            if page_token:
+                params["page_token"] = page_token
+            resp = requests.get(
+                f"{self.BASE_URL}/stocks/{self.symbol}/bars",
+                headers=self._headers(),
+                params=params,
+                timeout=15,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            bars.extend(data.get("bars", []))
+            page_token = data.get("next_page_token")
+            if not page_token:
+                break
+
+        if not bars:
+            raise RuntimeError("No intraday data returned from Alpaca.")
+
+        df = pd.DataFrame(bars)
+        df["t"] = pd.to_datetime(df["t"]).dt.tz_convert(ET)
+        df = df.set_index("t").rename(
+            columns={"o": "Open", "h": "High", "l": "Low", "c": "Close", "v": "Volume"}
+        )
+        return df[["Open", "High", "Low", "Close", "Volume"]]
+
+
 class SyntheticDataFeed(DataFeed):
     """Deterministic fake data for --dry-run testing when markets are
     closed or you just want to exercise the pipeline without hitting
@@ -528,7 +587,13 @@ def main():
     parser.add_argument("--iterations", type=int, default=1, help="Number of check cycles to run.")
     args = parser.parse_args()
 
-    feed = DataFeed() if args.live else SyntheticDataFeed()
+    if args.live:
+        if os.environ.get("ALPACA_API_KEY") and os.environ.get("ALPACA_SECRET_KEY"):
+            feed = AlpacaDataFeed()
+        else:
+            feed = DataFeed()  # falls back to yfinance if Alpaca keys aren't set
+    else:
+        feed = SyntheticDataFeed()
 
     for _ in range(args.iterations):
         run_once(feed)
