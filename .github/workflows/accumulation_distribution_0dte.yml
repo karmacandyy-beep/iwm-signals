@@ -25,10 +25,12 @@ jobs:
         run: pip install numpy pandas scipy requests yfinance
 
       - name: Run accumulation/distribution 0DTE signal check (LIVE)
-        # Uses Alpaca real-time IEX data automatically once ALPACA_API_KEY/
-        # ALPACA_SECRET_KEY secrets are set; falls back to yfinance until then.
+        # Feed priority: Twelve Data (easiest to set up) -> Alpaca -> yfinance
+        # fallback. Nothing breaks until you add a TWELVE_DATA_API_KEY or
+        # ALPACA_API_KEY/ALPACA_SECRET_KEY secret.
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TWELVE_DATA_API_KEY: ${{ secrets.TWELVE_DATA_API_KEY }}
           ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
         run: python3 accumulation_distribution_0dte.py --live --iterations 1

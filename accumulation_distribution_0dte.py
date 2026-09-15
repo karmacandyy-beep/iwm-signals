@@ -221,6 +221,60 @@ class AlpacaDataFeed(DataFeed):
         return df[["Open", "High", "Low", "Close", "Volume"]]
 
 
+class TwelveDataFeed(DataFeed):
+    """Real-time-ish bars from Twelve Data's time_series endpoint --
+    the easiest free option to set up (instant email signup, no
+    brokerage-style account like Alpaca requires) and its free tier
+    (800 calls/day, 8/min) comfortably covers a 3-min check cadence.
+    Free-tier data freshness varies by report (anywhere from near
+    real-time to a multi-hour delay depending on plan/exchange), so
+    treat this as "better and easier than yfinance", not "guaranteed
+    real-time" -- verify against a live quote before trusting it for
+    fast entries. Needs a TWELVE_DATA_API_KEY env var."""
+
+    BASE_URL = "https://api.twelvedata.com"
+
+    def __init__(self, symbol=SYMBOL):
+        super().__init__(symbol)
+        self.api_key = os.environ["TWELVE_DATA_API_KEY"]
+
+    def intraday_bars(self, days=3, interval="3m"):
+        resp = requests.get(
+            f"{self.BASE_URL}/time_series",
+            params={
+                "symbol": self.symbol,
+                "interval": "1min",
+                "outputsize": 5000,
+                "timezone": "America/New_York",
+                "apikey": self.api_key,
+            },
+            timeout=15,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("status") == "error" or "values" not in data:
+            raise RuntimeError(f"Twelve Data error: {data}")
+
+        df = pd.DataFrame(data["values"])
+        df["datetime"] = pd.to_datetime(df["datetime"]).dt.tz_localize(ET)
+        df = df.set_index("datetime").sort_index()
+        df = df.rename(
+            columns={"open": "Open", "high": "High", "low": "Low", "close": "Close", "volume": "Volume"}
+        )
+        for c in ["Open", "High", "Low", "Close", "Volume"]:
+            df[c] = df[c].astype(float)
+
+        cutoff = datetime.now(ET) - timedelta(days=days)
+        df = df[df.index >= cutoff]
+        if df.empty:
+            raise RuntimeError("No intraday data returned from Twelve Data in the requested window.")
+
+        bars = df.resample("3min").agg(
+            {"Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum"}
+        ).dropna()
+        return bars
+
+
 class SyntheticDataFeed(DataFeed):
     """Deterministic fake data for --dry-run testing when markets are
     closed or you just want to exercise the pipeline without hitting
@@ -588,10 +642,12 @@ def main():
     args = parser.parse_args()
 
     if args.live:
-        if os.environ.get("ALPACA_API_KEY") and os.environ.get("ALPACA_SECRET_KEY"):
+        if os.environ.get("TWELVE_DATA_API_KEY"):
+            feed = TwelveDataFeed()  # easiest to set up -- tried first
+        elif os.environ.get("ALPACA_API_KEY") and os.environ.get("ALPACA_SECRET_KEY"):
             feed = AlpacaDataFeed()
         else:
-            feed = DataFeed()  # falls back to yfinance if Alpaca keys aren't set
+            feed = DataFeed()  # falls back to yfinance if no other keys are set
     else:
         feed = SyntheticDataFeed()
 
