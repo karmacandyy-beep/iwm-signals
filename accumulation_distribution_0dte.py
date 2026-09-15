@@ -91,9 +91,13 @@ STATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state", "
 # from the source videos)
 # ---------------------------------------------------------------------------
 
-VALUE_AREA_PCT = 0.70          # standard Market Profile convention
-ABSORPTION_BUFFER_PCT = 0.0015 # how far past VAL/VAH the wick must reach
-CONFIRMATION_MAX_BARS = 3      # bars allowed to wait for confirmation
+VALUE_AREA_PCT = 0.50          # LOOSENED from 0.70 on 2026-09-15 (narrower value area -> edges touched more often)
+ABSORPTION_BUFFER_PCT = 0.0003 # LOOSENED from 0.0015 on 2026-09-15 (shallower wick past VAL/VAH now qualifies)
+CONFIRMATION_MAX_BARS = 6      # LOOSENED from 3 on 2026-09-15 (more bars allowed to wait for confirmation)
+# NOTE: loosened after 3 full trading days / 418 checks with zero signals at the
+# stricter defaults, purely to verify the alert pipeline fires end to end.
+# Expect more frequent but lower-quality setups. Consider tightening back toward
+# 0.70 / 0.0015 / 3 once you've confirmed notifications actually arrive.
 TARGET_DELTA = 0.45
 RISK_FREE_RATE = 0.05
 STOP_LOSS_PCT = -0.35          # of option premium
