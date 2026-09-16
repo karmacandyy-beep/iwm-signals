@@ -609,10 +609,8 @@ def check_for_entry(state, df, vp, now_et):
     }
 
     send_alert(
-        f"IWM 0DTE ENTER {option_type.upper()}",
-        f"{signal.reason} Strike {strike} {option_type}, delta {delta:.2f}, "
-        f"est. premium {premium:.2f}. Underlying {S:.2f}. "
-        f"VAL {vp.val} / POC {vp.poc} / VAH {vp.vah}.",
+        f"BUY {option_type.upper()}",
+        f"IWM {S:.2f}",
     )
 
 
