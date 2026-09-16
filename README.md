@@ -74,3 +74,13 @@ and are not required. Without `--live`, the script uses `SyntheticDataFeed`.
 - **0DTE options are extremely high variance** — fast theta decay, wide
   gamma swings, and this strategy has not been backtested. Alerts are
   not trade recommendations.
+
+### Continuous worker
+
+`python worker.py` runs as a long-lived service. During ET market hours it
+checks after every completed 3-minute candle, always using the yfinance
+`DataFeed`, and sends entry/exit alerts to `NTFY_TOPIC`. The included
+`railway.toml` sets the service start command and automatic restarts.
+
+The worker is an alerting process only; it does not place trades. yfinance can
+be delayed or incomplete intraday, so alerts are not guaranteed to be real-time.

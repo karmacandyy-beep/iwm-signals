@@ -1,0 +1,1 @@
+{"$schema":"https://railway.com/railway.schema.json","deploy":{"startCommand":"python worker.py","restartPolicyType":"ALWAYS","restartPolicyMaxRetries":10}}
