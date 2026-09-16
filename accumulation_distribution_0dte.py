@@ -641,15 +641,9 @@ def main():
     parser.add_argument("--iterations", type=int, default=1, help="Number of check cycles to run.")
     args = parser.parse_args()
 
-    if args.live:
-        if os.environ.get("TWELVE_DATA_API_KEY"):
-            feed = TwelveDataFeed()  # easiest to set up -- tried first
-        elif os.environ.get("ALPACA_API_KEY") and os.environ.get("ALPACA_SECRET_KEY"):
-            feed = AlpacaDataFeed()
-        else:
-            feed = DataFeed()  # falls back to yfinance if no other keys are set
-    else:
-        feed = SyntheticDataFeed()
+    # --live always uses yfinance, regardless of provider API keys.
+    # Pass the selected instance into every run_once cycle.
+    feed = DataFeed() if args.live else SyntheticDataFeed()
 
     for _ in range(args.iterations):
         run_once(feed)

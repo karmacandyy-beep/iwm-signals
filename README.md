@@ -49,6 +49,10 @@ docstring and inline comments before trusting this with real money.
 
 ## Setup
 
+`--live` always selects the yfinance `DataFeed` and passes it to `run_once`
+for each cycle. Alpaca and Twelve Data API keys do not change this selection
+and are not required. Without `--live`, the script uses `SyntheticDataFeed`.
+
 1. Repository secret `NTFY_TOPIC` (unchanged from before) — your private
    ntfy.sh topic.
 2. The workflow runs automatically on market-hours schedule and pushes
