@@ -5,6 +5,49 @@
   "last_signal": null,
   "losses": 0,
   "outbox": [],
-  "receipts": [],
-  "health_alerted": false
+  "receipts": [
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "EzjNUgYsrktr",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "2Ymm2j5KP5dn",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "7beMtee4uIPv",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "mzCmyqk8YiOd",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "fxk5Hgv8MLpA",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "30KVwOZDrnf6",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "EExpWvSSwDM6",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    }
+  ],
+  "health_alerted": true
 }
