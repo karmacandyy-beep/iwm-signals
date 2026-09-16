@@ -2,8 +2,8 @@
   "version": 1,
   "day": "2026-09-16",
   "position": null,
-  "last_signal": null,
-  "losses": 0,
+  "last_signal": "IWM-1m-2026-09-16T18:36:00+00:00-PUT",
+  "losses": 2,
   "outbox": [],
   "receipts": [
     {
@@ -59,7 +59,31 @@
       "server_message_id": "QuVQ9ar55ujY",
       "server_accepted": true,
       "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-16T18:02:00+00:00-PUT",
+      "server_message_id": "D4lD5hiwUg4n",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-16T18:02:00+00:00-PUT-exit",
+      "server_message_id": "EtuYpbRZ6Mbx",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-16T18:36:00+00:00-PUT",
+      "server_message_id": "t3LDWq5YpjQq",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-16T18:36:00+00:00-PUT-exit",
+      "server_message_id": "gSr87xwKhl9D",
+      "server_accepted": true,
+      "phone_receipt_verified": false
     }
   ],
-  "health_alerted": false
+  "health_alerted": true
 }
