@@ -47,7 +47,19 @@
       "server_message_id": "EExpWvSSwDM6",
       "server_accepted": true,
       "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "MvqtzlrzqD0c",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "2026-09-16-stale",
+      "server_message_id": "QuVQ9ar55ujY",
+      "server_accepted": true,
+      "phone_receipt_verified": false
     }
   ],
-  "health_alerted": true
+  "health_alerted": false
 }
