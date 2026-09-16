@@ -3,9 +3,12 @@
 
 This process is intended for a long-running worker service. It wakes shortly
 after each three-minute candle closes, calls run_once(DataFeed()), and sends
-entry/exit alerts through the existing NTFY_TOPIC environment variable.
+entry alerts through the existing NTFY_TOPIC environment variable.
 """
 import logging
+import os
+
+import requests
 import time
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -34,6 +37,19 @@ def seconds_to_next_check(now):
 
 
 def main():
+    topic = os.environ.get("NTFY_TOPIC", "").strip()
+    if not topic:
+        raise RuntimeError("NTFY_TOPIC must be configured for the continuous worker")
+    LOG.info("notification topic configured")
+    if os.environ.get("NTFY_TEST_ON_START") == "1":
+        response = requests.post(
+            f"https://ntfy.sh/{topic}",
+            data=b"TEST: continuous IWM worker connected. Not a trade signal.",
+            headers={"Title": "IWM service test"},
+            timeout=15,
+        )
+        response.raise_for_status()
+        LOG.info("ntfy accepted the Railway startup test")
     feed = DataFeed()
     LOG.info("continuous worker started; 3-minute candles; yfinance feed")
     while True:

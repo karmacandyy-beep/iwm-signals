@@ -553,7 +553,7 @@ def manage_open_position(state, current_price, now_et):
     if not pos:
         return
     entry_premium = pos["entry_premium_estimate"]
-    T = max((pd.Timestamp(pos["expiry"]).tz_localize(ET) - now_et).total_seconds(), 0) / (365 * 24 * 3600)
+    T = max((pd.Timestamp(pos["expiry"]).tz_localize(ET).replace(hour=16) - now_et).total_seconds(), 0) / (365 * 24 * 3600)
     sigma = pos["iv_at_entry"]
     cur_premium = bs_price(current_price, pos["strike"], T, RISK_FREE_RATE, sigma, pos["option_type"])
     pnl_pct = (cur_premium - entry_premium) / entry_premium if entry_premium else 0.0
@@ -567,12 +567,7 @@ def manage_open_position(state, current_price, now_et):
         exit_reason = f"Time-stop {TIME_STOP_ET} ET reached"
 
     if exit_reason:
-        send_alert(
-            f"IWM 0DTE EXIT {pos['option_type'].upper()}",
-            f"{exit_reason}. Strike {pos['strike']} {pos['option_type']}, "
-            f"est. premium {entry_premium:.2f} -> {cur_premium:.2f} ({pnl_pct:+.0%}). "
-            f"Underlying {current_price:.2f}.",
-        )
+        print(f"Position closed: {exit_reason}")
         state["open_position"] = None
 
 
