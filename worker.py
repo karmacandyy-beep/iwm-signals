@@ -8,7 +8,7 @@ entry alerts through the existing NTFY_TOPIC environment variable.
 import logging
 import os
 
-import requests
+from notifications import publish
 import time
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -42,14 +42,10 @@ def main():
         raise RuntimeError("NTFY_TOPIC must be configured for the continuous worker")
     LOG.info("notification topic configured")
     if os.environ.get("NTFY_TEST_ON_START") == "1":
-        response = requests.post(
-            f"https://ntfy.sh/{topic}",
-            data=b"TEST: continuous IWM worker connected. Not a trade signal.",
-            headers={"Title": "IWM service test"},
-            timeout=15,
-        )
-        response.raise_for_status()
-        LOG.info("ntfy accepted the Railway startup test")
+        if publish("IWM service test", "TEST: continuous IWM worker connected. Not a trade signal."):
+            LOG.info("ntfy accepted the Railway startup test")
+        else:
+            LOG.error("Startup notification test failed; continuing signal checks")
     feed = DataFeed()
     LOG.info("continuous worker started; 3-minute candles; yfinance feed")
     while True:

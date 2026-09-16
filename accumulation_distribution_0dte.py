@@ -529,19 +529,8 @@ def is_market_hours(now_et: datetime) -> bool:
 # ---------------------------------------------------------------------------
 
 def send_alert(title: str, message: str):
-    topic = os.environ.get("NTFY_TOPIC")
-    if not topic:
-        print(f"[no NTFY_TOPIC set] {title}: {message}")
-        return
-    try:
-        requests.post(
-            f"https://ntfy.sh/{topic}",
-            data=message.encode("utf-8"),
-            headers={"Title": title},
-            timeout=10,
-        )
-    except requests.RequestException as e:
-        print(f"Failed to send ntfy alert: {e}", file=sys.stderr)
+    from notifications import publish
+    return publish(title, message)
 
 
 # ---------------------------------------------------------------------------
@@ -589,7 +578,7 @@ def check_for_entry(state, df, vp, now_et):
     premium = bs_price(S, strike, T, RISK_FREE_RATE, sigma, option_type)
     delta = bs_delta(S, strike, T, RISK_FREE_RATE, sigma, option_type)
 
-    state["open_position"] = {
+    position = {
         "side": signal.side,
         "option_type": option_type,
         "strike": strike,
@@ -603,10 +592,10 @@ def check_for_entry(state, df, vp, now_et):
         "reason": signal.reason,
     }
 
-    send_alert(
-        f"BUY {option_type.upper()}",
-        f"IWM {S:.2f}",
-    )
+    if send_alert(f"BUY {option_type.upper()}", f"IWM {S:.2f}"):
+        state["open_position"] = position
+    else:
+        print("Entry notification failed; no open position recorded. Rechecking next candle.")
 
 
 def run_once(feed: DataFeed):
