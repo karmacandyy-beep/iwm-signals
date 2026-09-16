@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+research/iwm_1m.csv
+state/fast_momentum.json
+state/fast_momentum.json.tmp
