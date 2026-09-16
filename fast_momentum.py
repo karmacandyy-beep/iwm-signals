@@ -386,10 +386,7 @@ def paper_tick(raw,state,now,cfg=Config()):
     if not entry_allowed(sig,price,now,cfg):
         return 'CHASE_OR_REVERSAL'
     state['position']={**sig,'entry_time':now.isoformat(),'entry_price':price}
-    queue(state,f"Fast Momentum PAPER {sig['side']} setup",
-          f"IWM {price:.2f}; {cfg.bar_minutes}m confirmation {utc(sig['time']).tz_convert(ET).strftime('%H:%M:%S ET')}. "
-          f"Volume {sig['volume_ratio']:.2f}x; chart stop {sig['stop']:.2f}; maximum hold 5 minutes. "
-          'Research alert only. Yahoo data may lag. No verified option contract, bid/ask, premium target, or fill.',sig['id'])
+    queue(state, f"BUY {sig['side']} IWM", f"BUY {sig['side']} IWM @ {price:.2f}", sig['id'])
     state['outbox'][-1]['expires']=(utc(sig['time'])+pd.Timedelta(seconds=cfg.max_signal_age_seconds)).isoformat()
     return 'PAPER_SETUP'
 
@@ -447,9 +444,7 @@ def main():
     p.add_argument('--equity',type=float)
     args=p.parse_args();cfg=Config(bar_minutes=args.bar_minutes)
     if args.mode=='test-notification':
-        receipt=publish('Fast Momentum: TEST',
-                        'Your separate Fast Momentum paper-alert channel is connected. Existing strategy unchanged. '
-                        'This is only a delivery test, not a trade signal. Live option quotes are not connected.',
+        receipt=publish('BUY CALL IWM', 'BUY CALL IWM @ TEST PRICE',
                         'fast-momentum-test-'+pd.Timestamp.now(tz='UTC').isoformat())
         print(json.dumps(receipt));return
     if args.mode=='paper':
