@@ -445,7 +445,7 @@ def main():
     p.add_argument('--equity',type=float)
     args=p.parse_args();cfg=Config(bar_minutes=args.bar_minutes)
     if args.mode=='test-notification':
-        receipt=publish('BUY CALL IWM', 'BUY CALL IWM @ TEST PRICE',
+        receipt=publish('TEST — NOT A TRADE', 'Notification connection test only. No buy signal.',
                         'fast-momentum-test-'+pd.Timestamp.now(tz='UTC').isoformat())
         print(json.dumps(receipt));return
     if args.mode=='paper':
