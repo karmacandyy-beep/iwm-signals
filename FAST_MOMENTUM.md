@@ -105,3 +105,14 @@ validation or the 50 paper trades needed for an initial evaluation.
 A licensed live stock/options feed and a continuously hosted runner are necessary
 before representing this as execution-grade real-time option alerts. No paid
 subscriptions were purchased, broker trades placed, or actual positions managed.
+
+
+## Recovery and verification
+The separate GitHub Actions workflow schedules recovery attempts at :17 and :47
+through a UTC window covering US market hours. A concurrency lock keeps only one
+monitor active; a queued attempt can resume after a three-hour run or failure.
+The exchange calendar gates all scheduled runs, including holidays and early closes.
+GitHub scheduling can be delayed or dropped; this is not guaranteed uninterrupted
+real-time hosting. The `check` dispatch mode verifies current completed-bar freshness
+and can send a labeled test. Entry messages contain only `BUY CALL IWM @ price`
+or `BUY PUT IWM @ price`; the price is the underlying IWM price, not an option premium.

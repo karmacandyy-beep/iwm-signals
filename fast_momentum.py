@@ -297,7 +297,7 @@ def publish(title,body,event_id):
         raise RuntimeError('NTFY_TOPIC missing or invalid')
     headers={'Title':title,'Tags':'chart_with_upwards_trend'}
     try:
-        r=requests.post(f'https://ntfy.sh/{topic}',data=(body+'\nEvent: '+event_id).encode(),
+        r=requests.post(f'https://ntfy.sh/{topic}',data=body.encode(),
                         headers=headers,timeout=15)
     except requests.RequestException:
         raise RuntimeError('ntfy network error; destination withheld') from None
@@ -411,7 +411,8 @@ def run_paper(args,cfg):
             now=pd.Timestamp.now(tz='UTC')
             status=paper_tick(raw,state,now,cfg)
             flush(state,path)
-            print(f'{now.isoformat()} {status}',flush=True)
+            latest = raw.index[-1] + pd.Timedelta(minutes=1)
+            print(f'{now.isoformat()} {status} latest_bar_end={latest.isoformat()}',flush=True)
             errors=0
         except Exception as exc:
             # Never print HTTP URLs/credentials embedded in exception messages.

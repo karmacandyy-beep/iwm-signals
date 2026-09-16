@@ -2,15 +2,15 @@ name: Fast Momentum - Separate Paper Alerts
 
 on:
   schedule:
-    # Three 3-hour sessions, paired UTC hours for daylight saving time.
-    # Runtime gates select 09:23, 12:23, 15:23 New York starts.
-    - cron: '23 13,14,16,17,19,20 * * 1-5'
+    # Recovery attempts queue behind the single active monitor.
+    # UTC window covers standard/daylight time; runtime checks the exchange calendar.
+    - cron: '17,47 13-21 * * 1-5'
   workflow_dispatch:
     inputs:
       mode:
         description: Validate/backtest, or run separate paper alerts
         type: choice
-        options: [validate, paper]
+        options: [validate, check, paper]
         default: validate
       test_notification:
         description: Send one clearly labeled Fast Momentum ntfy test
@@ -49,6 +49,34 @@ jobs:
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python fast_momentum.py test-notification
+      - name: Check current market data
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'check' }}
+        run: |
+          python -u - <<'PYCODE'
+          import time
+          import pandas as pd
+          from fast_momentum import Config, ET, complete_bars, download_bars, session_bounds
+          cfg = Config()
+          for attempt in range(4):
+              raw = download_bars(days=1)
+              now = pd.Timestamp.now(tz='UTC')
+              bars = complete_bars(raw, cfg, now)
+              if bars.empty:
+                  raise RuntimeError('No completed market bars')
+              end = bars.index[-1] + pd.Timedelta(minutes=1)
+              age = (now-end).total_seconds()
+              print(f'Feed check: checked={now.isoformat()} bar_end={end.isoformat()} age_seconds={age:.1f} IWM={bars.Close.iloc[-1]:.2f}', flush=True)
+              bounds = session_bounds(now.tz_convert(ET).date())
+              if not bounds or not (bounds[0] <= now < bounds[1]):
+                  print('Market closed: historical fetch passed; live freshness not verified')
+                  break
+              if 0 <= age <= cfg.max_signal_age_seconds:
+                  print('PASS: current completed bar available within freshness limit')
+                  break
+              if attempt == 3:
+                  raise RuntimeError('Feed too delayed for fast-momentum entries')
+              time.sleep(20)
+          PYCODE
       - name: Historical replay
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'validate' }}
         env:
@@ -62,12 +90,14 @@ jobs:
         run: |
           python - <<'PY'
           import os
-          from datetime import datetime
+          from datetime import datetime, timedelta
           from zoneinfo import ZoneInfo
           from fast_momentum import session_bounds
           now = datetime.now(ZoneInfo('America/New_York'))
-          run = (os.environ['REQUESTED_MODE'] == 'paper') if os.environ['EVENT_NAME'] == 'workflow_dispatch' else now.hour in (9, 12, 15)
-          run = run and session_bounds(now.date()) is not None
+          bounds = session_bounds(now.date())
+          in_window = bool(bounds and bounds[0] - timedelta(minutes=15) <= now < bounds[1])
+          requested = os.environ['EVENT_NAME'] != 'workflow_dispatch' or os.environ['REQUESTED_MODE'] == 'paper'
+          run = requested and in_window
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"run={str(run).lower()}\n")
           print(f"Separate fast-momentum session selected: {run}")
