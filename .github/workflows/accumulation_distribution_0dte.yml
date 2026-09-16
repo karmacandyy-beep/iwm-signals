@@ -1,10 +1,16 @@
 name: IWM Accumulation/Distribution 0DTE Signal Check
 
 on:
-  # Every 3 min, Mon-Fri, 13:35-20:05 UTC = 9:35am-4:05pm ET (0DTE scalping timeframe)
+  # Every 5 minutes on weekdays; includes ET market hours in summer and winter.
+  # GitHub may delay scheduled runs; the script gates entries by ET market hours.
   schedule:
-    - cron: "*/3 13-20 * * 1-5"
+    - cron: "*/5 13-21 * * 1-5"
   workflow_dispatch:
+    inputs:
+      test_notification:
+        description: Send one ntfy test notification before checking signals
+        type: boolean
+        default: false
 
 permissions:
   contents: write  # needed to commit state/ad_positions.json back to the repo
@@ -23,6 +29,31 @@ jobs:
 
       - name: Install dependencies
         run: pip install numpy pandas scipy requests yfinance
+
+      - name: Send ntfy test notification
+        if: ${{ inputs.test_notification == true }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+          topic = os.environ.get("NTFY_TOPIC", "").strip()
+          if not topic:
+              raise SystemExit("NTFY_TOPIC is missing")
+          try:
+              response = requests.post(
+                  f"https://ntfy.sh/{topic}",
+                  data=b"Test notification: your IWM alert workflow is connected. Signal checks use yfinance on a five-minute weekday schedule; delivery may be delayed. This is not a trade signal.",
+                  headers={"Title": "IWM notifications connected", "Tags": "white_check_mark"},
+                  timeout=15,
+              )
+          except requests.RequestException:
+              raise SystemExit("ntfy request failed; topic omitted from logs")
+          if not response.ok:
+              raise SystemExit(f"ntfy rejected the notification: HTTP {response.status_code}")
+          print("ntfy accepted the test notification")
+          PY
 
       - name: Run accumulation/distribution 0DTE signal check (LIVE)
         # --live always uses yfinance; no market-data API keys are required.
