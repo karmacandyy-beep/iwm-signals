@@ -81,6 +81,12 @@ class MomentumTests(unittest.TestCase):
                 with self.assertRaises(RuntimeError):flush(st,p)
             self.assertEqual(len(json.loads(p.read_text())['outbox']),1)
 
+    def test_delivered_health_event_not_queued_again(self):
+        st = new_state('2026-09-14')
+        st['receipts'] = [{'event_id': '2026-09-14-stale'}]
+        queue(st, 'data delayed', 'paused', '2026-09-14-stale')
+        self.assertEqual(st['outbox'], [])
+
     def test_quotes_sizing_and_premium(self):
         now=pd.Timestamp('2026-09-14 10:00',tz=ET)
         q={'timestamp':now,'bid':1.,'ask':1.02,'delta':.6,'expiry':'2026-09-14','ask_size':3}

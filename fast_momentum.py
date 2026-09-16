@@ -314,7 +314,7 @@ def new_state(day):
 
 
 def queue(state,title,body,event_id):
-    if any(x['event_id']==event_id for x in state['outbox']):
+    if any(x['event_id']==event_id for x in state['outbox'] + state['receipts']):
         return
     state['outbox'].append({'title':title,'body':body,'event_id':event_id})
 

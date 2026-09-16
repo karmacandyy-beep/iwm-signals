@@ -1,0 +1,37 @@
+name: Read-only notification audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect cached notification metadata without sending
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          python - <<'PYCODE'
+          import os, json, urllib.request
+          from datetime import datetime, timezone
+          topic = os.environ['NTFY_TOPIC'].strip()
+          try:
+              with urllib.request.urlopen('https://ntfy.sh/' + topic + '/json?poll=1&since=24h', timeout=25) as response:
+                  rows = response.read().decode().splitlines()
+          except Exception as exc:
+              raise SystemExit('Audit fetch failed: ' + type(exc).__name__) from None
+          messages = [json.loads(row) for row in rows if row.strip()]
+          messages = [m for m in messages if m.get('event') == 'message']
+          print('Cached messages:', len(messages))
+          for m in messages:
+              title = m.get('title', '')
+              body = m.get('message', '')
+              if 'BUY PUT' in title or 'BUY PUT' in body:
+                  when = datetime.fromtimestamp(m['time'], timezone.utc).isoformat()
+                  shape = 'legacy_strategy_format' if title == 'BUY PUT' and body.startswith('IWM ') else 'fast_momentum_format' if title == 'BUY PUT IWM' else 'unknown_format'
+                  print(json.dumps({'id':m['id'], 'utc':when, 'format':shape, 'test': 'TEST' in body.upper()}))
+          PYCODE
