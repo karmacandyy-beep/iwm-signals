@@ -1,89 +1,41 @@
 {
   "version": 1,
-  "day": "2026-09-16",
+  "day": "2026-09-17",
   "position": null,
-  "last_signal": "IWM-1m-2026-09-16T18:36:00+00:00-PUT",
-  "losses": 2,
+  "last_signal": "IWM-1m-2026-09-17T15:45:00+00:00-PUT",
+  "losses": 0,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "EzjNUgYsrktr",
+      "event_id": "2026-09-17-stale",
+      "server_message_id": "PL9TjIVshXAz",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "2Ymm2j5KP5dn",
+      "event_id": "IWM-1m-2026-09-17T14:01:00+00:00-PUT",
+      "server_message_id": "Tt8aGiv8wm2Y",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "7beMtee4uIPv",
+      "event_id": "IWM-1m-2026-09-17T14:01:00+00:00-PUT-exit",
+      "server_message_id": "QKfRtaz5Clfl",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "mzCmyqk8YiOd",
+      "event_id": "IWM-1m-2026-09-17T15:45:00+00:00-PUT",
+      "server_message_id": "Wmm4VAm78AAj",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "fxk5Hgv8MLpA",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "30KVwOZDrnf6",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "EExpWvSSwDM6",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "MvqtzlrzqD0c",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "2026-09-16-stale",
-      "server_message_id": "QuVQ9ar55ujY",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-16T18:02:00+00:00-PUT",
-      "server_message_id": "D4lD5hiwUg4n",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-16T18:02:00+00:00-PUT-exit",
-      "server_message_id": "EtuYpbRZ6Mbx",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-16T18:36:00+00:00-PUT",
-      "server_message_id": "t3LDWq5YpjQq",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-16T18:36:00+00:00-PUT-exit",
-      "server_message_id": "gSr87xwKhl9D",
+      "event_id": "IWM-1m-2026-09-17T15:45:00+00:00-PUT-exit",
+      "server_message_id": "UrAgna2AZlDU",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
   ],
-  "health_alerted": true
+  "health_alerted": false
 }
