@@ -1,41 +1,59 @@
 {
   "version": 1,
-  "day": "2026-09-17",
-  "position": null,
-  "last_signal": "IWM-1m-2026-09-17T15:45:00+00:00-PUT",
-  "losses": 0,
+  "day": "2026-09-18",
+  "position": {
+    "id": "IWM-1m-2026-09-18T16:24:00+00:00-PUT",
+    "side": "PUT",
+    "time": "2026-09-18T16:24:00+00:00",
+    "close": 282.6099853515625,
+    "high": 282.75,
+    "low": 282.5899963378906,
+    "stop": 282.75,
+    "volume_ratio": 1.5505608226845724,
+    "vwap": 283.2938407970594,
+    "entry_time": "2026-09-18T16:24:08.972519+00:00",
+    "entry_price": 282.6000061035156
+  },
+  "last_signal": "IWM-1m-2026-09-18T16:24:00+00:00-PUT",
+  "losses": 1,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-09-17-stale",
-      "server_message_id": "PL9TjIVshXAz",
+      "event_id": "2026-09-18-stale",
+      "server_message_id": "NjSjYOWj6P4s",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-17T14:01:00+00:00-PUT",
-      "server_message_id": "Tt8aGiv8wm2Y",
+      "event_id": "IWM-1m-2026-09-18T13:55:00+00:00-PUT",
+      "server_message_id": "gDoVgfgGb5qf",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-17T14:01:00+00:00-PUT-exit",
-      "server_message_id": "QKfRtaz5Clfl",
+      "event_id": "IWM-1m-2026-09-18T13:55:00+00:00-PUT-exit",
+      "server_message_id": "j1Lur39zFdWK",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-17T15:45:00+00:00-PUT",
-      "server_message_id": "Wmm4VAm78AAj",
+      "event_id": "IWM-1m-2026-09-18T16:02:00+00:00-PUT",
+      "server_message_id": "0w8MPCTux3mQ",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-17T15:45:00+00:00-PUT-exit",
-      "server_message_id": "UrAgna2AZlDU",
+      "event_id": "IWM-1m-2026-09-18T16:02:00+00:00-PUT-exit",
+      "server_message_id": "E7vYffOnbidx",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-18T16:24:00+00:00-PUT",
+      "server_message_id": "sKLxZAoWBHCo",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
   ],
-  "health_alerted": true
+  "health_alerted": false
 }
