@@ -1,21 +1,9 @@
 {
   "version": 1,
   "day": "2026-09-18",
-  "position": {
-    "id": "IWM-1m-2026-09-18T16:24:00+00:00-PUT",
-    "side": "PUT",
-    "time": "2026-09-18T16:24:00+00:00",
-    "close": 282.6099853515625,
-    "high": 282.75,
-    "low": 282.5899963378906,
-    "stop": 282.75,
-    "volume_ratio": 1.5505608226845724,
-    "vwap": 283.2938407970594,
-    "entry_time": "2026-09-18T16:24:08.972519+00:00",
-    "entry_price": 282.6000061035156
-  },
+  "position": null,
   "last_signal": "IWM-1m-2026-09-18T16:24:00+00:00-PUT",
-  "losses": 1,
+  "losses": 2,
   "outbox": [],
   "receipts": [
     {
@@ -53,7 +41,13 @@
       "server_message_id": "sKLxZAoWBHCo",
       "server_accepted": true,
       "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-18T16:24:00+00:00-PUT-exit",
+      "server_message_id": "qLK6TLGjZpAx",
+      "server_accepted": true,
+      "phone_receipt_verified": false
     }
   ],
-  "health_alerted": false
+  "health_alerted": true
 }
