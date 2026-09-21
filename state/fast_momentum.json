@@ -1,20 +1,8 @@
 {
   "version": 1,
   "day": "2026-09-21",
-  "position": {
-    "id": "IWM-1m-2026-09-21T16:28:00+00:00-CALL",
-    "side": "CALL",
-    "time": "2026-09-21T16:28:00+00:00",
-    "close": 285.8800048828125,
-    "high": 285.8900146484375,
-    "low": 285.8299865722656,
-    "stop": 285.8299865722656,
-    "volume_ratio": 3.3593738251703034,
-    "vwap": 285.66734290741203,
-    "entry_time": "2026-09-21T16:28:16.426754+00:00",
-    "entry_price": 285.8900146484375
-  },
-  "last_signal": "IWM-1m-2026-09-21T16:28:00+00:00-CALL",
+  "position": null,
+  "last_signal": "IWM-1m-2026-09-21T19:39:00+00:00-CALL",
   "losses": 0,
   "outbox": [],
   "receipts": [
@@ -41,7 +29,13 @@
       "server_message_id": "olClpR6HfdgU",
       "server_accepted": true,
       "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-21T16:28:00+00:00-CALL-exit",
+      "server_message_id": "5iD4BNTMtXRY",
+      "server_accepted": true,
+      "phone_receipt_verified": false
     }
   ],
-  "health_alerted": false
+  "health_alerted": true
 }
