@@ -1,41 +1,53 @@
 {
   "version": 1,
-  "day": "2026-09-24",
+  "day": "2026-09-25",
   "position": null,
-  "last_signal": "IWM-1m-2026-09-24T14:22:00+00:00-PUT",
+  "last_signal": "IWM-1m-2026-09-25T15:35:00+00:00-PUT",
   "losses": 2,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-09-24-stale",
-      "server_message_id": "R42CTJBSAcnZ",
+      "event_id": "2026-09-25-stale",
+      "server_message_id": "9kyQ9YggNeUD",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-24T14:10:00+00:00-PUT",
-      "server_message_id": "07jO4h4GltRx",
+      "event_id": "IWM-1m-2026-09-25T14:01:00+00:00-PUT",
+      "server_message_id": "53KNkTos0VuW",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-24T14:10:00+00:00-PUT-exit",
-      "server_message_id": "OoOVHQbgBp6l",
+      "event_id": "IWM-1m-2026-09-25T14:01:00+00:00-PUT-exit",
+      "server_message_id": "YTBgJyJwbdGI",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-24T14:22:00+00:00-PUT",
-      "server_message_id": "VsgNlOe5o7lB",
+      "event_id": "IWM-1m-2026-09-25T14:42:00+00:00-PUT",
+      "server_message_id": "MsK7b0Pp20dx",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-24T14:22:00+00:00-PUT-exit",
-      "server_message_id": "N1duLmC4AqSg",
+      "event_id": "IWM-1m-2026-09-25T14:42:00+00:00-PUT-exit",
+      "server_message_id": "tgFFA3IGtD9d",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-25T15:35:00+00:00-PUT",
+      "server_message_id": "EGVObiM9VSv0",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-09-25T15:35:00+00:00-PUT-exit",
+      "server_message_id": "hnmff75zr0AH",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
   ],
-  "health_alerted": true
+  "health_alerted": false
 }
