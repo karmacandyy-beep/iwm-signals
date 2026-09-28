@@ -2,7 +2,7 @@
   "version": 1,
   "day": "2026-09-28",
   "position": null,
-  "last_signal": "IWM-1m-2026-09-28T16:27:00+00:00-CALL",
+  "last_signal": "IWM-1m-2026-09-28T17:12:00+00:00-CALL",
   "losses": 1,
   "outbox": [],
   "receipts": [
@@ -49,5 +49,5 @@
       "phone_receipt_verified": false
     }
   ],
-  "health_alerted": true
+  "health_alerted": false
 }
