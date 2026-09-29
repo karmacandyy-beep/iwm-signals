@@ -1,50 +1,38 @@
 {
   "version": 1,
-  "day": "2026-09-28",
+  "day": "2026-09-29",
   "position": null,
-  "last_signal": "IWM-1m-2026-09-28T17:12:00+00:00-CALL",
-  "losses": 1,
+  "last_signal": "IWM-1m-2026-09-29T14:41:00+00:00-PUT",
+  "losses": 2,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-09-28-stale",
-      "server_message_id": "5iq93IRasgGE",
+      "event_id": "2026-09-29-stale",
+      "server_message_id": "Tbp9knDkWspg",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-28T14:29:00+00:00-CALL",
-      "server_message_id": "0M7bOuqvE8uw",
+      "event_id": "IWM-1m-2026-09-29T13:42:00+00:00-CALL",
+      "server_message_id": "0adapcYXok23",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-28T14:29:00+00:00-CALL-exit",
-      "server_message_id": "L6ivAukkxyg3",
+      "event_id": "IWM-1m-2026-09-29T13:42:00+00:00-CALL-exit",
+      "server_message_id": "ShlPBtfP96Z0",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-28T14:44:00+00:00-PUT",
-      "server_message_id": "gzXIO14laFqj",
+      "event_id": "IWM-1m-2026-09-29T14:41:00+00:00-PUT",
+      "server_message_id": "lZxgeuURYUgj",
       "server_accepted": true,
       "phone_receipt_verified": false
     },
     {
-      "event_id": "IWM-1m-2026-09-28T14:44:00+00:00-PUT-exit",
-      "server_message_id": "i9RXDmSoAJ9F",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-28T16:17:00+00:00-CALL",
-      "server_message_id": "zjDSa8wVNLXJ",
-      "server_accepted": true,
-      "phone_receipt_verified": false
-    },
-    {
-      "event_id": "IWM-1m-2026-09-28T16:17:00+00:00-CALL-exit",
-      "server_message_id": "bAcQlyBtAX1J",
+      "event_id": "IWM-1m-2026-09-29T14:41:00+00:00-PUT-exit",
+      "server_message_id": "lSia0pla9pUE",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
