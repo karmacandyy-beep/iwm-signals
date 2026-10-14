@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "day": "2026-10-13",
+  "day": "2026-10-14",
   "position": null,
   "last_signal": null,
   "losses": 0,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-10-13-stale",
-      "server_message_id": "TGa8ePu6lStB",
+      "event_id": "2026-10-14-stale",
+      "server_message_id": "mWRjpWJGVASZ",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
