@@ -1,14 +1,26 @@
 {
   "version": 1,
-  "day": "2026-10-19",
+  "day": "2026-10-20",
   "position": null,
-  "last_signal": null,
+  "last_signal": "IWM-1m-2026-10-20T19:41:00+00:00-CALL",
   "losses": 0,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-10-19-stale",
-      "server_message_id": "tWI4nATdpCOw",
+      "event_id": "2026-10-20-stale",
+      "server_message_id": "R17JOZCXYpnz",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-10-20T19:41:00+00:00-CALL",
+      "server_message_id": "6HeWkajhrTIi",
+      "server_accepted": true,
+      "phone_receipt_verified": false
+    },
+    {
+      "event_id": "IWM-1m-2026-10-20T19:41:00+00:00-CALL-exit",
+      "server_message_id": "GgF72g8zAmWv",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
