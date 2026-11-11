@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "day": "2026-11-10",
+  "day": "2026-11-11",
   "position": null,
-  "last_signal": "IWM-1m-2026-11-10T20:41:00+00:00-CALL",
+  "last_signal": "IWM-1m-2026-11-11T20:39:00+00:00-CALL",
   "losses": 0,
   "outbox": [],
   "receipts": [
     {
-      "event_id": "2026-11-10-stale",
-      "server_message_id": "7RQrY3iNcOQX",
+      "event_id": "2026-11-11-stale",
+      "server_message_id": "zW3OvIlNi4jz",
       "server_accepted": true,
       "phone_receipt_verified": false
     }
